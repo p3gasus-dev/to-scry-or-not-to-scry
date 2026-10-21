@@ -74,7 +74,6 @@ td.key{color:var(--accent);font-weight:500}
 .flag{display:inline-block;margin-left:8px;padding:1px 6px;border:1px solid var(--warn);color:var(--warn);border-radius:3px;font:500 .65rem var(--mono);letter-spacing:.06em;text-transform:uppercase;vertical-align:middle}
 .searches{display:flex;flex-direction:column;gap:14px}
 .search{display:flex;flex-direction:column;gap:6px;min-width:0}
-.search label{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .searchrow{display:flex;gap:8px;min-width:0}
 .searchrow input{flex:1;min-width:0;font:inherit;font-family:var(--mono);font-size:.85rem;padding:9px 10px;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:4px}
 .searchrow button{font:inherit;font-size:.9rem;padding:8px 16px;border:1px solid var(--accent);background:var(--accent);color:var(--bg);border-radius:4px;cursor:pointer;min-width:4.5rem}
@@ -96,8 +95,8 @@ td.key{color:var(--accent);font-weight:500}
 
   <section id="searchSection" hidden>
     <div class="search">
-      <label for="reOrbs">Maps to farm scrying orbs</label>
-      <div class="searchrow"><input id="reOrbs" readonly spellcheck="false"><button type="button" data-copy="reOrbs">Copy</button></div>
+      <h2 id="searchTitle">Maps to farm scrying orbs</h2>
+      <div class="searchrow"><input id="reOrbs" readonly spellcheck="false" aria-labelledby="searchTitle"><button type="button" data-copy="reOrbs">Copy</button></div>
     </div>
   </section>
 
@@ -177,12 +176,33 @@ td.key{color:var(--accent);font-weight:500}
            (10*(W.layout+W.density+W.boss+W.cards)) * 100;
   }
 
-  // Search strings: quote names with spaces, join with |, stay under the game's 250 character limit.
+  // Shortest text that finds this map and no other. The game's search matches any part of an item's
+  // name (which ends in " Map"), ignoring case, so a piece is only usable if no other map contains it.
+  function shortestUnique(name, others){
+    var lower = name.toLowerCase();
+    var pool = others.map(function(o){ return (o + " Map").toLowerCase(); });
+    function free(piece){ return pool.every(function(o){ return o.indexOf(piece) < 0; }); }
+    for (var pass = 0; pass < 2; pass++){
+      for (var n = 1; n <= lower.length; n++){
+        for (var i = 0; i + n <= lower.length; i++){
+          var piece = lower.substr(i, n);
+          var plain = /^[a-z0-9]+$/.test(piece);
+          if (pass === 0 ? !plain : (plain || !/^[a-z0-9' -]+$/.test(piece) || piece !== piece.trim())) continue;
+          if (free(piece)) return plain ? piece : '"' + piece + '"';
+        }
+      }
+    }
+    return /^[A-Za-z0-9]+$/.test(name) ? name : '"' + name + '"';
+  }
+
+  // Search string: shortest unique piece per map, joined with |, under the game's 250 character limit.
   function searchString(names){
+    var all = Object.keys(ratings);
     var parts = [];
     var len = 0;
     for (var i = 0; i < names.length; i++){
-      var p = /^[A-Za-z0-9]+$/.test(names[i]) ? names[i] : '"' + names[i] + '"';
+      var others = all.filter(function(m){ return m !== names[i]; });
+      var p = shortestUnique(names[i], others);
       if (len + p.length + (parts.length ? 1 : 0) > 250) break;
       len += p.length + (parts.length ? 1 : 0);
       parts.push(p);

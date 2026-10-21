@@ -44,6 +44,24 @@ section{display:flex;flex-direction:column;gap:12px;min-width:0}
 table{border-collapse:collapse;width:100%;min-width:560px;font-variant-numeric:tabular-nums}
 table.wide{min-width:700px}
 th,td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.cardpop{position:fixed;z-index:20;pointer-events:none;display:flex;gap:10px;padding:10px;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 28px rgba(0,0,0,.28)}
+.dcard{width:132px;display:flex;flex-direction:column;border:2px solid #8a6f3c;border-radius:6px;background:#1b1712;color:#e8dcc0;overflow:hidden;font-family:var(--body)}
+.dcard .t{font:700 .78rem var(--display);text-align:center;padding:5px 4px;border-bottom:1px solid #8a6f3c;min-height:2.4em;display:flex;align-items:center;justify-content:center}
+.dcard .art{width:100%;aspect-ratio:312/232;object-fit:cover;background:#0d0b08;display:block}
+.dcard .art.none{display:flex}
+.dcard .r{font-size:.68rem;line-height:1.25;text-align:center;padding:6px 5px;color:#8fb2e6;min-height:3.6em;display:flex;align-items:center;justify-content:center}
+.dcard .p{font:500 .75rem var(--mono);text-align:center;padding:4px;border-top:1px solid #8a6f3c;color:#e0c26a}
+.cn{cursor:help;white-space:nowrap}
+.cn:hover,.cn:focus{color:var(--accent);outline:0;text-decoration:underline dotted}
+details.cards{font:400 .75rem var(--body);margin-top:3px}
+details.cards summary{cursor:pointer;color:var(--muted);list-style:none;width:max-content}
+details.cards summary::before{content:"▸ ";font-size:.7em}
+details.cards[open] summary::before{content:"▾ "}
+details.cards summary::-webkit-details-marker{display:none}
+details.cards summary:hover{color:var(--accent)}
+details.cards ul{list-style:none;margin:5px 0 2px;padding:0;display:flex;flex-direction:column;gap:3px;font-family:var(--body);font-weight:400}
+details.cards li{display:flex;justify-content:space-between;gap:14px;color:var(--fg)}
+.cp{font-family:var(--mono);color:var(--muted)}
 .cardicon{width:.75em;height:1em;vertical-align:-.15em;margin-right:5px}
 .orbicon{width:28px;height:28px;vertical-align:middle;margin-right:8px;object-fit:contain}
 th{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
@@ -175,11 +193,68 @@ td.key{color:var(--accent);font-weight:500}
     return parts.join("|");
   }
 
+  var ART = "https://web.poecdn.com/image/divination-card/";
+  var pop = null;
+  function makeCard(c){
+    var d = document.createElement("div"); d.className = "dcard";
+    var t = document.createElement("div"); t.className = "t"; t.textContent = c.name; d.appendChild(t);
+    if (c.art){
+      var im = document.createElement("img"); im.className = "art"; im.alt = ""; im.src = ART + c.art + ".png";
+      im.onerror = function(){ im.removeAttribute("src"); im.style.visibility = "hidden"; };
+      d.appendChild(im);
+    }
+    var r = document.createElement("div"); r.className = "r";
+    r.textContent = (c.stack ? c.stack + "× " : "") + (c.reward || ""); d.appendChild(r);
+    var p = document.createElement("div"); p.className = "p"; p.textContent = fmtPrice(c.price || 0); d.appendChild(p);
+    return d;
+  }
+  function showCards(td, cs){
+    hideCards();
+    pop = document.createElement("div"); pop.className = "cardpop";
+    cs.forEach(function(c){ pop.appendChild(makeCard(c)); });
+    document.body.appendChild(pop);
+    var b = td.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+    var left = Math.max(8, Math.min(b.right - w, window.innerWidth - w - 8));
+    var top = b.bottom + 6 + h > window.innerHeight ? Math.max(8, b.top - h - 6) : b.bottom + 6;
+    pop.style.left = left + "px"; pop.style.top = top + "px";
+  }
+  function hideCards(){ if (pop){ pop.remove(); pop = null; } }
+  window.addEventListener("scroll", hideCards, true);
+
+  // Names of the cards that can drop on a map, each hoverable for its card.
+  function cardList(cell, mapName){
+    var cs = mapCards[mapName];
+    if (!cs || !cs.length) return;
+    var box = document.createElement("details"); box.className = "cards";
+    var sum = document.createElement("summary"); sum.textContent = "Cards (" + cs.length + ")"; box.appendChild(sum);
+    var ul = document.createElement("ul");
+    cs.forEach(function(c){
+      var li = document.createElement("li");
+      var s = document.createElement("span"); s.className = "cn"; s.textContent = c.name; s.tabIndex = 0;
+      s.addEventListener("mouseenter", function(){ showCards(s, [c]); });
+      s.addEventListener("focus", function(){ showCards(s, [c]); });
+      s.addEventListener("mouseleave", hideCards);
+      s.addEventListener("blur", hideCards);
+      li.appendChild(s);
+      var pr = document.createElement("span"); pr.className = "cp"; pr.textContent = fmtPrice(c.price || 0); li.appendChild(pr);
+      ul.appendChild(li);
+    });
+    box.appendChild(ul);
+    box.addEventListener("toggle", hideCards);
+    cell.appendChild(box);
+  }
+
   function cardCell(tr, name){
     var avg = avgCard(name);
     var td = rowCell(tr, avg == null ? "–" : fmtPrice(avg), "num");
     var cs = mapCards[name];
-    if (cs) td.title = cs.map(function(c){ return c.name + " " + fmtPrice(c.price || 0); }).join("\n");
+    if (cs && cs.length){
+      td.tabIndex = 0; td.style.cursor = "help";
+      td.addEventListener("mouseenter", function(){ showCards(td, cs); });
+      td.addEventListener("focus", function(){ showCards(td, cs); });
+      td.addEventListener("mouseleave", hideCards);
+      td.addEventListener("blur", hideCards);
+    }
   }
 
   function renderOrbs(lines){
@@ -195,6 +270,7 @@ td.key{color:var(--accent);font-weight:500}
       var name = rowCell(tr, l.name, "name");
       if (orbIcon){ var im = document.createElement("img"); im.className = "orbicon"; im.alt = ""; im.src = orbIcon; im.loading = "lazy"; im.onerror = function(){ im.remove(); }; name.insertBefore(im, name.firstChild); }
       if ((l.count||0) < 3 || (l.listingCount||0) < 5){ var f = document.createElement("span"); f.className="flag"; f.textContent="Thin data"; name.appendChild(f); }
+      cardList(name, l.name);
       rowCell(tr, fmtPrice(l.chaosValue), "num key");
       cardCell(tr, l.name);
       var r = ratings[l.name];

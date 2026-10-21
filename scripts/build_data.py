@@ -229,6 +229,11 @@ def choose_card_lists(fetcher, previous, seed, atlas_maps, known_cards, today, f
 # Everything else
 # --------------------------------------------------------------------------- #
 
+def art_name(card):
+    """File name of a card's art on the game's image server: the name without spaces or punctuation."""
+    return re.sub(r"[^A-Za-z0-9]", "", card)
+
+
 def build_orbs(payload):
     orbs = []
     for line in (payload or {}).get("lines") or []:
@@ -339,7 +344,16 @@ def main():
 
     lists, source, updated = choose_card_lists(
         fetcher, previous, seed, {m["name"] for m in maps}, set(prices), today, force)
-    map_cards = {name: [{"name": card, "price": prices.get(norm(card), 0), "image": images.get(norm(card))} for card in cards]
+    # Stack size and reward text for the hover card, from Maps of Exile (optional).
+    details = {}
+    try:
+        for card in json.loads(fetcher.get("cards.json", MOE + "/cards.json", optional=True) or "[]"):
+            extra = {k: card[k] for k in ("stack", "reward") if card.get(k)}
+            details[norm(card["name"])] = extra
+    except (ValueError, KeyError, TypeError):
+        details = {}
+    map_cards = {name: [dict({"name": card, "price": prices.get(norm(card), 0), "art": art_name(card)}, **details.get(norm(card), {}))
+                      for card in cards]
                  for name, cards in lists.items()}
 
     last_update = moe_globals.get("lastUpdate")

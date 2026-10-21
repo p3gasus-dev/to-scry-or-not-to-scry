@@ -105,7 +105,7 @@ td.key{color:var(--accent);font-weight:500}
     <h2>Scrying Orbs</h2>
     <div class="table-wrap">
       <table class="wide">
-        <thead><tr><th>#</th><th>Orb</th><th>Price</th><th><svg class="cardicon" viewBox="0 0 16 22" aria-hidden="true"><rect x="1" y="1" width="14" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="3.5" y="3.5" width="9" height="9" rx="1" fill="currentColor" opacity=".35"/><path d="M4 16h8M4 18.5h5" stroke="currentColor" stroke-width="1.2"/></svg>Avg card</th><th>Map score</th><th>7d</th></tr></thead>
+        <thead><tr><th>#</th><th>Orb</th><th>Price</th><th><svg class="cardicon" viewBox="0 0 16 22" aria-hidden="true"><rect x="1" y="1" width="14" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="3.5" y="3.5" width="9" height="9" rx="1" fill="currentColor" opacity=".35"/><path d="M4 16h8M4 18.5h5" stroke="currentColor" stroke-width="1.2"/></svg>Avg card</th><th>Map score</th></tr></thead>
         <tbody id="orbRows"></tbody>
       </table>
     </div>
@@ -115,7 +115,7 @@ td.key{color:var(--accent);font-weight:500}
     <h2>Best maps to scry onto</h2>
     <div class="table-wrap">
       <table class="wide">
-        <thead><tr><th>#</th><th>Map</th><th>Score</th><th>Layout</th><th>Density</th><th>Boss</th><th><svg class="cardicon" viewBox="0 0 16 22" aria-hidden="true"><rect x="1" y="1" width="14" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="3.5" y="3.5" width="9" height="9" rx="1" fill="currentColor" opacity=".35"/><path d="M4 16h8M4 18.5h5" stroke="currentColor" stroke-width="1.2"/></svg>Avg card</th></tr></thead>
+        <thead><tr><th>#</th><th>Map</th><th>Score</th><th title="Layout | Density | Boss">L | D | B</th><th><svg class="cardicon" viewBox="0 0 16 22" aria-hidden="true"><rect x="1" y="1" width="14" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="3.5" y="3.5" width="9" height="9" rx="1" fill="currentColor" opacity=".35"/><path d="M4 16h8M4 18.5h5" stroke="currentColor" stroke-width="1.2"/></svg>Avg card</th></tr></thead>
         <tbody id="mapRows"></tbody>
       </table>
     </div>
@@ -297,8 +297,6 @@ td.key{color:var(--accent);font-weight:500}
       cardCell(tr, l.name);
       var r = ratings[l.name];
       rowCell(tr, r ? fmt(qualityScore(r),0) : "–", "num");
-      var ch = typeof l.change === "number" ? l.change : null;
-      rowCell(tr, ch == null ? "–" : (ch > 0 ? "+" : "") + fmt(ch,0) + "%", "num " + (ch > 0 ? "up" : ch < 0 ? "down" : ""));
       tbody.appendChild(tr);
     });
     $("orbSection").hidden = top.length === 0;
@@ -320,9 +318,9 @@ td.key{color:var(--accent);font-weight:500}
       var tags = (m.tags || []).filter(function(t){ return TAGS[t]; }).map(function(t){ return TAGS[t]; });
       if (tags.length){ var s = document.createElement("small"); s.textContent = tags.join(" · "); name.appendChild(s); }
       rowCell(tr, fmt(m.score,0), "num key");
-      rowCell(tr, String(m.layout), "num");
-      rowCell(tr, (m.densityEstimated ? "~" : "") + m.density, "num");
-      rowCell(tr, String(m.boss), "num");
+      function pad(v){ return String(v).padStart(2, "\u00a0"); }
+      var ldb = rowCell(tr, pad(m.layout) + " | " + (m.densityEstimated ? "~" : "\u00a0") + pad(m.density).trim().padStart(2, "\u00a0") + " | " + pad(m.boss), "num");
+      ldb.title = "Layout " + m.layout + ", density " + (m.densityEstimated ? "about " : "") + m.density + ", boss " + m.boss;
       cardCell(tr, m.name);
       tbody.appendChild(tr);
     });

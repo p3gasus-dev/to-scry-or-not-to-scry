@@ -1,0 +1,482 @@
+{
+ "Shrine": [
+  "Vinia's Token",
+  "The Thaumaturgist",
+  "The Lunaris Priestess",
+  "The Progeny of Lunaris"
+ ],
+ "Mausoleum": [
+  "The Celestial Justicar",
+  "The Lich",
+  "The Forsaken",
+  "No Traces"
+ ],
+ "Tropical Island": [
+  "Pride of the First Ones",
+  "The Scout",
+  "Azure Rage",
+  "The Lake"
+ ],
+ "Ivory Temple": [
+  "The Conduit",
+  "Light and Truth",
+  "The Lord of Celebration",
+  "The Unexpected Prize"
+ ],
+ "Excavation": [
+  "Volatile Power",
+  "The Jeweller's Boon",
+  "A Sea of Blue",
+  "Runic Luck"
+ ],
+ "Fungal Hollow": [
+  "The Mercenary",
+  "The Dragon",
+  "Treasure Hunter",
+  "The Shepherd's Sandals"
+ ],
+ "Caldera": [
+  "Hope",
+  "The King's Heart",
+  "Burning Blood",
+  "Lonely Warrior"
+ ],
+ "Primordial Blocks": [
+  "The Primordial",
+  "The Last Supper",
+  "Costly Curio",
+  "Reflection of the Heart"
+ ],
+ "Coral Ruins": [
+  "The Vast",
+  "The Tyrant",
+  "The Stormcaller",
+  "Lingering Remnants"
+ ],
+ "Desert": [
+  "Earth Drinker",
+  "Imperial Legacy",
+  "Baited Expectations",
+  "Gift of Asenath"
+ ],
+ "Iceberg": [
+  "The Fletcher",
+  "Mitts",
+  "The Whiteout",
+  "The Long Watch"
+ ],
+ "Factory": [
+  "Gift of the Gemling Queen",
+  "Rats",
+  "Ever-Changing",
+  "Who Asked"
+ ],
+ "Cage": [
+  "The Summoner",
+  "The Journalist",
+  "The Last Supper",
+  "The Apothecary"
+ ],
+ "Bazaar": [
+  "The Drunken Aristocrat",
+  "The Miracle",
+  "The Slumbering Beast",
+  "The Silly Boy"
+ ],
+ "Graveyard": [
+  "The One With All",
+  "Bowyer's Dream",
+  "Azyran's Reward",
+  "Damnation"
+ ],
+ "Infested Valley": [
+  "The Feast",
+  "Death",
+  "The Throne",
+  "The Offspring"
+ ],
+ "Belfry": [
+  "The Enlightened",
+  "The Life Thief",
+  "Demigod's Wager",
+  "A Modest Request"
+ ],
+ "Courthouse": [
+  "The Oath",
+  "Thirst for Knowledge",
+  "Sambodhi's Wisdom",
+  "Checkmate"
+ ],
+ "Terrace": [
+  "The Wilted Rose",
+  "The Easy Stroll",
+  "The Fox in the Brambles",
+  "The Forbidden Fruit"
+ ],
+ "Reef": [
+  "The Fathomless Depths",
+  "The Messenger",
+  "The Mad King",
+  "More is Never Enough"
+ ],
+ "Temple": [
+  "The Opulent",
+  "The Innocent",
+  "The Lord of Celebration",
+  "Demigod's Wager"
+ ],
+ "Colonnade": [
+  "The Traitor",
+  "Struck by Lightning",
+  "The Patient",
+  "The Dungeon Master"
+ ],
+ "Cells": [
+  "The Chains that Bind",
+  "The Offering",
+  "Harmony of Souls",
+  "The Dungeon Master"
+ ],
+ "Desert Spring": [
+  "Imperial Legacy",
+  "More is Never Enough",
+  "The Tumbleweed",
+  "Ambitious Obsession"
+ ],
+ "Park": [
+  "The Poet",
+  "The Sun",
+  "Dialla's Subjugation",
+  "Forbidden Power"
+ ],
+ "Relic Chambers": [
+  "The Union",
+  "The Enlightened",
+  "Dialla's Subjugation",
+  "Reflection of the Heart"
+ ],
+ "Silo": [
+  "Burning Blood",
+  "Haunting Shadows",
+  "The Tireless Extractor",
+  "Further Invention"
+ ],
+ "Museum": [
+  "Blind Venture",
+  "A Dab of Ink",
+  "Temperance",
+  "One Last Score"
+ ],
+ "Channel": [
+  "Left to Fate",
+  "The Old Man",
+  "Desperate Crusade",
+  "The Destination"
+ ],
+ "Arsenal": [
+  "Three Faces in the Dark",
+  "Merciless Armament",
+  "Dying Anguish",
+  "Last Stand"
+ ],
+ "Waterways": [
+  "Terrible Secret of Space",
+  "Lachrymal Necrosis",
+  "Desperate Crusade",
+  "A Stone Perfected"
+ ],
+ "Arid Lake": [
+  "The Inoculated",
+  "The Eye of the Dragon",
+  "The Mind's Eyes",
+  "Azure Rage"
+ ],
+ "Spider Lair": [
+  "The Dark Mage",
+  "The Tinkerer's Table",
+  "The Wedding Gift",
+  "Poisoned Faith"
+ ],
+ "Laboratory": [
+  "The Scholar",
+  "Destined to Crumble",
+  "The Polymath",
+  "The Academic"
+ ],
+ "Conservatory": [
+  "The Flora's Gift",
+  "The Porcupine",
+  "Peaceful Moments",
+  "The Forbidden Fruit"
+ ],
+ "Ghetto": [
+  "The Trial",
+  "The Tyrant",
+  "The Saint's Treasure",
+  "Fire Of Unknown Origin"
+ ],
+ "Haunted Mansion": [
+  "The Blazing Fire",
+  "The Awakened",
+  "The Journalist",
+  "The Transformation"
+ ],
+ "Dark Forest": [
+  "The Road to Power",
+  "The Cursed King",
+  "The Wolven King's Bite",
+  "Etched in Blood"
+ ],
+ "Plateau": [
+  "Rain of Chaos",
+  "The Wind",
+  "The Harvester",
+  "I See Brothers"
+ ],
+ "Grave Trough": [
+  "Left to Fate",
+  "Brother's Stash",
+  "Cursed Words",
+  "Pearls Before Swine"
+ ],
+ "Lookout": [
+  "The Wrath",
+  "The Traitor",
+  "The Coming Storm",
+  "The Blazing Fire"
+ ],
+ "Arachnid Nest": [
+  "The Explorer",
+  "The Demoness",
+  "Mawr Blaidd",
+  "Call to the First Ones"
+ ],
+ "Gardens": [
+  "Rain Tempter",
+  "The Awakened",
+  "The Fox in the Brambles",
+  "Matryoshka"
+ ],
+ "Burial Chambers": [
+  "The Doctor",
+  "The Betrayal",
+  "The Witch",
+  "The Brawny Battle Mage"
+ ],
+ "Geode": [
+  "Time-Lost Relic",
+  "The Endurance",
+  "The Rite of Elements",
+  "Terrible Secret of Space"
+ ],
+ "Promenade": [
+  "Gemcutter's Promise",
+  "Jack in the Box",
+  "The Last Laugh",
+  "Lucky Bastion"
+ ],
+ "Summit": [
+  "The Pack Leader",
+  "The Wolverine",
+  "The Mountain",
+  "A Chilling Wind"
+ ],
+ "Primordial Pool": [
+  "The Hunger",
+  "The Survivalist",
+  "The Eye of the Dragon",
+  "The Prince of Darkness"
+ ],
+ "Sulphur Vents": [
+  "The Standoff",
+  "The Darkest Dream",
+  "Vile Power",
+  "The Bitter Blossom"
+ ],
+ "Cold River": [
+  "The Sun",
+  "The Twins",
+  "A Chilling Wind",
+  "Divine Shard"
+ ],
+ "Toxic Sewer": [
+  "Death",
+  "The Darkest Dream",
+  "Vile Power",
+  "Toxic Tidings"
+ ],
+ "Colosseum": [
+  "The Gladiator",
+  "The Last One Standing",
+  "The King's Blade",
+  "The Visionary"
+ ],
+ "Forking River": [
+  "Humility",
+  "Hunter's Resolve",
+  "The Fishmonger",
+  "The Long Watch"
+ ],
+ "Crystal Ore": [
+  "Three Voices",
+  "Buried Treasure",
+  "Friendship",
+  "Bijoux"
+ ],
+ "Frozen Cabins": [
+  "The Pack Leader",
+  "Hunter's Resolve",
+  "Mitts",
+  "The Whiteout"
+ ],
+ "Core": [
+  "The Hunger",
+  "The Nurse",
+  "Draped in Dreams",
+  "Brush, Paint and Palette"
+ ],
+ "Overgrown Shrine": [
+  "The Brittle Emperor",
+  "The Surgeon",
+  "Emperor of Purity",
+  "The Garish Power"
+ ],
+ "Vault": [
+  "The Hoarder",
+  "The Gambler",
+  "Chaotic Disposition",
+  "The Cache"
+ ],
+ "Ramparts": [
+  "Jack in the Box",
+  "The Warlord",
+  "Lingering Remnants",
+  "The Ruthless Ceinture"
+ ],
+ "Flooded Mine": [
+  "Glimmer of Hope",
+  "The Fathomless Depths",
+  "The Primordial",
+  "Underground Forest"
+ ],
+ "City Square": [
+  "Assassin's Favour",
+  "The Sigil",
+  "The Mayor",
+  "Home"
+ ],
+ "Dunes": [
+  "Earth Drinker",
+  "Baited Expectations",
+  "Acclimatisation",
+  "The Fortunate"
+ ],
+ "Lava Lake": [
+  "The Battle Born",
+  "The Wrath",
+  "Heterochromia",
+  "The Standoff"
+ ],
+ "Vaal Pyramid": [
+  "The Queen",
+  "The Catalyst",
+  "The Damned",
+  "Unrequited Love"
+ ],
+ "Bramble Valley": [
+  "The Explorer",
+  "Mawr Blaidd",
+  "The Adventuring Spirit",
+  "Avian Pursuit"
+ ],
+ "Forbidden Woods": [
+  "The Demoness",
+  "The Sigil",
+  "Call to the First Ones",
+  "Alivia's Grace"
+ ],
+ "Shipyard": [
+  "The Pact",
+  "The Undaunted",
+  "The Professor",
+  "The Fishmonger"
+ ],
+ "Mesa": [
+  "The Scarred Meadow",
+  "Time-Lost Relic",
+  "Tranquillity",
+  "The Enforcer"
+ ],
+ "Alleyways": [
+  "The Gentleman",
+  "The Ruthless Ceinture",
+  "The Side Quest",
+  "The Enthusiasts"
+ ],
+ "Atoll": [
+  "The Wind",
+  "The Vast",
+  "The Old Man",
+  "The Destination"
+ ],
+ "Foundry": [
+  "The Fiend",
+  "The Golden Era",
+  "Haunting Shadows",
+  "Ever-Changing"
+ ],
+ "Crater": [
+  "The Lion",
+  "The Demon",
+  "When Currents Blaze",
+  "Bound by Flame"
+ ],
+ "Cemetery": [
+  "The One With All",
+  "The Cacophony",
+  "Brother's Stash",
+  "Brother's Gift"
+ ],
+ "Lair": [
+  "The Watcher",
+  "The Wolf's Shadow",
+  "The Wolf",
+  "The Wolverine"
+ ],
+ "Jungle Valley": [
+  "The Web",
+  "The Adventuring Spirit",
+  "Alivia's Grace",
+  "Poisoned Faith"
+ ],
+ "Arachnid Tomb": [
+  "The Surgeon",
+  "The Rabid Rhoa",
+  "Echoes of Love",
+  "Draped in Dreams"
+ ],
+ "Palace": [
+  "Prosperity",
+  "The Dapper Prodigy",
+  "The Sephirot",
+  "Light and Truth"
+ ],
+ "Siege": [
+  "The Trial",
+  "The Spark and the Flame",
+  "Home",
+  "The Silly Boy"
+ ],
+ "Stagnation": [
+  "The Coming Storm",
+  "Struck by Lightning",
+  "The Mind's Eyes",
+  "Avian Pursuit"
+ ],
+ "Orchard": [
+  "The Wilted Rose",
+  "Boon of Justice",
+  "Peaceful Moments",
+  "Brotherhood in Exile"
+ ]
+}

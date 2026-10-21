@@ -148,31 +148,37 @@ def parse_poedb(html, atlas_maps, known_cards):
         return {}
 
     result = {}
-    pending = None  # most recent map-name link
     owner = None
     mode = None
-    for kind, text in parser.tokens:
+    tokens = parser.tokens
+    for index, (kind, text) in enumerate(tokens):
         if kind == "text":
             label = text.rstrip(":").strip().lower()
             if re.match(r"tier\b", label):
-                owner = pending
+                # The map's name is the nearest map-name token just before its "Tier" label,
+                # whether the page shows it as plain text or as a link.
+                owner = None
+                for kind_before, before in reversed(tokens[max(0, index - 4):index]):
+                    if before in atlas_maps:
+                        owner = before
+                        break
                 if owner in result:
                     owner = None  # the same map listed twice: keep the first
                 elif owner:
                     result[owner] = []
                 mode = None
-            elif re.fullmatch(r"cards?", label):
+                continue
+            if re.fullmatch(r"cards?", label):
                 mode = "cards"
-            elif re.fullmatch(r"links?|connections?|connected( maps)?", label):
+                continue
+            if re.fullmatch(r"links?|connections?|connected( maps)?", label):
                 mode = "link"
-            elif label in _OTHER_LABELS or (text.endswith(":") and len(text) <= 30):
+                continue
+            if label in _OTHER_LABELS or (text.endswith(":") and len(text) <= 30):
                 mode = None
-        else:
-            if mode == "cards" and owner and text in known_cards:
-                if text not in result[owner]:
-                    result[owner].append(text)
-            elif text in atlas_maps:
-                pending = text
+                continue
+        if mode == "cards" and owner and text in known_cards and text not in result[owner]:
+            result[owner].append(text)
     return {name: cards for name, cards in result.items() if cards}
 
 

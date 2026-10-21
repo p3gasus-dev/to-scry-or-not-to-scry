@@ -1,0 +1,54 @@
+name: Update scrying orb prices
+
+# Builds the site with fresh data and deploys it straight to GitHub Pages.
+# Nothing is committed, so the repository history stays clean.
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # poe.ninja refreshes PoE 1 prices roughly every 15 minutes
+  workflow_dispatch:
+    inputs:
+      accept_new_card_lists:
+        description: "Accept PoEDB card lists even if they differ a lot from the last good ones"
+        type: boolean
+        default: false
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build site with fresh data
+        env:
+          FORCE_CARD_LISTS: ${{ inputs.accept_new_card_lists }}
+        run: |
+          mkdir _site
+          cp index.html _site/
+          # Reads poe.ninja, Maps of Exile and PoEDB; a failure here stops the deploy
+          # and the previous site stays live. --previous lets it reuse yesterday's card lists.
+          python3 scripts/build_data.py --out _site/data.json \
+            --previous "https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/data.json"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -240,6 +240,7 @@ def build_orbs(payload):
             "count": line.get("count"),
             "listingCount": line.get("listingCount"),
             "change": spark.get("totalChange"),
+            "icon": line.get("icon"),
         })
     return orbs
 
@@ -274,7 +275,7 @@ def main():
     args = parser.parse_args()
 
     repo = os.environ.get("GITHUB_REPOSITORY", "local")
-    fetcher = Fetcher("scrying-orb-top10 (https://github.com/%s)" % repo, args.fixtures)
+    fetcher = Fetcher("to-scry-or-not-to-scry (https://github.com/%s)" % repo, args.fixtures)
     today = args.today or datetime.now(timezone.utc).strftime("%Y-%m-%d")
     force = os.environ.get("FORCE_CARD_LISTS", "").lower() in ("1", "true", "yes")
 
@@ -295,20 +296,31 @@ def main():
         raise SystemExit("no rated Atlas maps in the Maps of Exile data")
     # Card prices come from poe.ninja: the current league, or Standard while the
     # league has too few cards priced (early in a league). Never from Maps of Exile.
-    prices, price_league = {}, None
+    prices, images, price_league = {}, {}, None
     for candidate in dict.fromkeys([league, "Standard"]):
-        url = "%s/stash/current/item/overview?league=%s&type=DivinationCard" % (NINJA, urllib.parse.quote(candidate))
+        # Divination cards live on the exchange endpoint: lines carry an id and a
+        # price in chaos, and core.items maps each id to its name and image.
+        url = "%s/exchange/current/overview?league=%s&type=DivinationCard" % (NINJA, urllib.parse.quote(candidate))
         text = fetcher.get("divcards.json" if candidate == league else "divcards-standard.json",
                            url, optional=True)
-        found = {}
+        found, art = {}, {}
         try:
-            for line in (json.loads(text) if text else {}).get("lines") or []:
-                if line.get("chaosValue") is not None:
-                    found[norm(line["name"])] = line["chaosValue"]
-        except ValueError:
+            payload = json.loads(text) if text else {}
+            items = {}
+            for i in (payload.get("core") or {}).get("items") or []:
+                items[i.get("detailsId")] = i
+                items[i.get("id")] = i
+            for line in payload.get("lines") or []:
+                item = items.get(line.get("id")) or {}
+                if item.get("name") and line.get("primaryValue") is not None:
+                    key = norm(item["name"])
+                    found[key] = line["primaryValue"]
+                    if item.get("image"):
+                        art[key] = urllib.parse.urljoin("https://poe.ninja/", item["image"])
+        except (ValueError, AttributeError):
             pass
         if len(found) >= 100:
-            prices, price_league = found, candidate
+            prices, images, price_league = found, art, candidate
             break
         log("poe.ninja card prices for %s unavailable (%d cards)" % (candidate, len(found)))
     if not prices:
@@ -327,7 +339,7 @@ def main():
 
     lists, source, updated = choose_card_lists(
         fetcher, previous, seed, {m["name"] for m in maps}, set(prices), today, force)
-    map_cards = {name: [{"name": card, "price": prices.get(norm(card), 0)} for card in cards]
+    map_cards = {name: [{"name": card, "price": prices.get(norm(card), 0), "image": images.get(norm(card))} for card in cards]
                  for name, cards in lists.items()}
 
     last_update = moe_globals.get("lastUpdate")

@@ -299,7 +299,7 @@ def main():
     prices, images, price_league = {}, {}, None
     for candidate in dict.fromkeys([league, "Standard"]):
         # Divination cards live on the exchange endpoint: lines carry an id and a
-        # price in chaos, and core.items maps each id to its name and image.
+        # price in chaos, and the top-level items list maps each id to its name (and image, when given).
         url = "%s/exchange/current/overview?league=%s&type=DivinationCard" % (NINJA, urllib.parse.quote(candidate))
         text = fetcher.get("divcards.json" if candidate == league else "divcards-standard.json",
                            url, optional=True)
@@ -307,7 +307,7 @@ def main():
         try:
             payload = json.loads(text) if text else {}
             items = {}
-            for i in (payload.get("core") or {}).get("items") or []:
+            for i in (payload.get("items") or []) + ((payload.get("core") or {}).get("items") or []):
                 items[i.get("detailsId")] = i
                 items[i.get("id")] = i
             for line in payload.get("lines") or []:

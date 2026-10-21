@@ -44,6 +44,8 @@ section{display:flex;flex-direction:column;gap:12px;min-width:0}
 table{border-collapse:collapse;width:100%;min-width:560px;font-variant-numeric:tabular-nums}
 table.wide{min-width:700px}
 th,td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.cardicon{width:.75em;height:1em;vertical-align:-.15em;margin-right:5px}
+.orbicon{width:28px;height:28px;vertical-align:middle;margin-right:8px;object-fit:contain}
 th{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
 tr:last-child td{border-bottom:0}
 th:nth-child(1),td:nth-child(1){text-align:left;width:2.5rem;color:var(--muted);font-family:var(--mono)}
@@ -89,7 +91,7 @@ td.key{color:var(--accent);font-weight:500}
     <h2>Scrying Orbs</h2>
     <div class="table-wrap">
       <table class="wide">
-        <thead><tr><th>#</th><th>Orb</th><th>Price</th><th>Avg card</th><th>Map score</th><th>7d</th></tr></thead>
+        <thead><tr><th>#</th><th>Orb</th><th>Price</th><th><svg class="cardicon" viewBox="0 0 16 22" aria-hidden="true"><rect x="1" y="1" width="14" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="3.5" y="3.5" width="9" height="9" rx="1" fill="currentColor" opacity=".35"/><path d="M4 16h8M4 18.5h5" stroke="currentColor" stroke-width="1.2"/></svg>Avg card</th><th>Map score</th><th>7d</th></tr></thead>
         <tbody id="orbRows"></tbody>
       </table>
     </div>
@@ -99,7 +101,7 @@ td.key{color:var(--accent);font-weight:500}
     <h2>Best maps to scry onto</h2>
     <div class="table-wrap">
       <table class="wide">
-        <thead><tr><th>#</th><th>Map</th><th>Score</th><th>Layout</th><th>Density</th><th>Boss</th><th>Avg card</th></tr></thead>
+        <thead><tr><th>#</th><th>Map</th><th>Score</th><th>Layout</th><th>Density</th><th>Boss</th><th><svg class="cardicon" viewBox="0 0 16 22" aria-hidden="true"><rect x="1" y="1" width="14" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="3.5" y="3.5" width="9" height="9" rx="1" fill="currentColor" opacity=".35"/><path d="M4 16h8M4 18.5h5" stroke="currentColor" stroke-width="1.2"/></svg>Avg card</th></tr></thead>
         <tbody id="mapRows"></tbody>
       </table>
     </div>
@@ -119,6 +121,7 @@ td.key{color:var(--accent);font-weight:500}
 
   var ratings = {};
   var mapCards = {};
+  var orbIcon = "";
   var divRate = 0;      // chaos per divine
 
   function fmt(n, d){ return Number(n).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}); }
@@ -190,6 +193,7 @@ td.key{color:var(--accent);font-weight:500}
       var tr = document.createElement("tr");
       rowCell(tr, String(i+1));
       var name = rowCell(tr, l.name, "name");
+      if (orbIcon){ var im = document.createElement("img"); im.className = "orbicon"; im.alt = ""; im.src = orbIcon; im.loading = "lazy"; im.onerror = function(){ im.remove(); }; name.insertBefore(im, name.firstChild); }
       if ((l.count||0) < 3 || (l.listingCount||0) < 5){ var f = document.createElement("span"); f.className="flag"; f.textContent="Thin data"; name.appendChild(f); }
       rowCell(tr, fmtPrice(l.chaosValue), "num key");
       cardCell(tr, l.name);
@@ -265,6 +269,7 @@ td.key{color:var(--accent);font-weight:500}
       mapCards = json.mapCards || {};
 
       $("reOrbs").value = "";
+      orbIcon = ((json.lines.filter(function(l){ return l.icon; })[0]) || {}).icon || "";
       renderOrbs(json.lines);
       renderMaps(json.maps);
       $("searchSection").hidden = !$("reOrbs").value;

@@ -53,14 +53,11 @@ th,td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--line);whi
 .dcard .p{font:500 .75rem var(--mono);text-align:center;padding:4px;border-top:1px solid #8a6f3c;color:#e0c26a}
 .cn{cursor:help;white-space:nowrap}
 .cn:hover,.cn:focus{color:var(--accent);outline:0;text-decoration:underline dotted}
-details.cards{font:400 .75rem var(--body);margin-top:3px}
-details.cards summary{cursor:pointer;color:var(--muted);list-style:none;width:max-content}
-details.cards summary::before{content:"▸ ";font-size:.7em}
-details.cards[open] summary::before{content:"▾ "}
-details.cards summary::-webkit-details-marker{display:none}
-details.cards summary:hover{color:var(--accent)}
-details.cards ul{list-style:none;margin:5px 0 2px;padding:0;display:flex;flex-direction:column;gap:3px;font-family:var(--body);font-weight:400}
-details.cards li{display:flex;justify-content:space-between;gap:14px;color:var(--fg)}
+button.tog{all:unset;cursor:pointer;color:var(--muted);width:1.4em;text-align:center;font:400 .8rem var(--mono);margin-right:2px;border-radius:3px;vertical-align:middle}
+button.tog:hover{color:var(--accent)}
+button.tog:focus-visible{outline:2px solid var(--accent)}
+ul.cardlist{list-style:none;margin:6px 0 2px;padding:0 0 0 1.4em;display:flex;flex-direction:column;gap:3px;font:400 .78rem var(--body)}
+ul.cardlist li{display:flex;justify-content:space-between;gap:14px;color:var(--fg)}
 .cp{font-family:var(--mono);color:var(--muted)}
 .cardicon{width:.75em;height:1em;vertical-align:-.15em;margin-right:5px}
 .orbicon{width:28px;height:28px;vertical-align:middle;margin-right:8px;object-fit:contain}
@@ -225,9 +222,9 @@ td.key{color:var(--accent);font-weight:500}
   function cardList(cell, mapName){
     var cs = mapCards[mapName];
     if (!cs || !cs.length) return;
-    var box = document.createElement("details"); box.className = "cards";
-    var sum = document.createElement("summary"); sum.textContent = "Cards (" + cs.length + ")"; box.appendChild(sum);
-    var ul = document.createElement("ul");
+    var btn = document.createElement("button"); btn.type = "button"; btn.className = "tog";
+    btn.setAttribute("aria-expanded", "false"); btn.setAttribute("aria-label", "Show cards for " + mapName); btn.textContent = "▸";
+    var ul = document.createElement("ul"); ul.className = "cardlist"; ul.hidden = true;
     cs.forEach(function(c){
       var li = document.createElement("li");
       var s = document.createElement("span"); s.className = "cn"; s.textContent = c.name; s.tabIndex = 0;
@@ -239,9 +236,14 @@ td.key{color:var(--accent);font-weight:500}
       var pr = document.createElement("span"); pr.className = "cp"; pr.textContent = fmtPrice(c.price || 0); li.appendChild(pr);
       ul.appendChild(li);
     });
-    box.appendChild(ul);
-    box.addEventListener("toggle", hideCards);
-    cell.appendChild(box);
+    btn.addEventListener("click", function(){
+      hideCards();
+      ul.hidden = !ul.hidden;
+      btn.setAttribute("aria-expanded", String(!ul.hidden));
+      btn.textContent = ul.hidden ? "▸" : "▾";
+    });
+    cell.insertBefore(btn, cell.firstChild);
+    cell.appendChild(ul);
   }
 
   function cardCell(tr, name){

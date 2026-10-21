@@ -177,10 +177,16 @@ def parse_poedb(html, atlas_maps, known_cards):
 
 
 def plausible(parsed, atlas_maps):
-    if len(parsed) < max(30, int(0.6 * len(atlas_maps))):
-        return False
     sizes = [len(cards) for cards in parsed.values()]
-    return 2 <= sum(sizes) / len(sizes) <= 8 and max(sizes) <= 20
+    average = sum(sizes) / len(sizes) if sizes else 0
+    log("PoEDB: %d of %d Atlas maps parsed, %.1f cards per map on average, at most %d"
+        % (len(parsed), len(atlas_maps), average, max(sizes) if sizes else 0))
+    missing = sorted(atlas_maps - set(parsed))
+    if missing:
+        log("PoEDB: not found: " + ", ".join(missing[:25]) + (" …" if len(missing) > 25 else ""))
+    if len(parsed) < max(30, int(0.5 * len(atlas_maps))):
+        return False
+    return 2 <= average <= 8 and max(sizes) <= 20
 
 
 def agrees_with(parsed, reference):
@@ -342,12 +348,18 @@ def main():
     with open(args.seed, encoding="utf-8") as handle:
         seed = json.load(handle)
 
+    # Every card name Maps of Exile knows, so cards poe.ninja doesn't price still match.
+    try:
+        all_cards = json.loads(fetcher.get("cards.json", MOE + "/cards.json", optional=True) or "[]")
+    except ValueError:
+        all_cards = []
     lists, source, updated = choose_card_lists(
-        fetcher, previous, seed, {m["name"] for m in maps}, set(prices), today, force)
+        fetcher, previous, seed, {m["name"] for m in maps},
+        set(prices) | {norm(c["name"]) for c in all_cards}, today, force)
     # Stack size and reward text for the hover card, from Maps of Exile (optional).
     details = {}
     try:
-        for card in json.loads(fetcher.get("cards.json", MOE + "/cards.json", optional=True) or "[]"):
+        for card in all_cards:
             extra = {k: card[k] for k in ("stack", "reward") if card.get(k)}
             details[norm(card["name"])] = extra
     except (ValueError, KeyError, TypeError):

@@ -178,12 +178,14 @@ td.key{color:var(--accent);font-weight:500}
 
   // Shortest text that finds this map and no other. The game's search matches any part of an item's
   // name (which ends in " Map"), ignoring case, so a piece is only usable if no other map contains it.
+  // At least four characters: shorter pieces also match mods and stats on the item.
+  var MIN_PIECE = 4;
   function shortestUnique(name, others){
     var lower = name.toLowerCase();
     var pool = others.map(function(o){ return (o + " Map").toLowerCase(); });
     function free(piece){ return pool.every(function(o){ return o.indexOf(piece) < 0; }); }
     for (var pass = 0; pass < 2; pass++){
-      for (var n = 1; n <= lower.length; n++){
+      for (var n = Math.min(MIN_PIECE, lower.length); n <= lower.length; n++){
         for (var i = 0; i + n <= lower.length; i++){
           var piece = lower.substr(i, n);
           var plain = /^[a-z0-9]+$/.test(piece);
@@ -279,11 +281,20 @@ td.key{color:var(--accent);font-weight:500}
     }
   }
 
+  function isThin(l){ return (l.count||0) < 3 || (l.listingCount||0) < 5; }
+
   function renderOrbs(lines){
     var top = lines
       .filter(function(l){ return l && l.chaosValue > 0; })
       .sort(function(a,b){ return b.chaosValue - a.chaosValue; })
-      .slice(0,10);
+      ;
+    // Thin-data orbs stay in the list but do not count toward the ten, so each one adds another orb.
+    var solid = 0;
+    top = top.filter(function(l, i){
+      if (solid >= 10) return false;
+      if (!isThin(l)) solid++;
+      return true;
+    });
     var tbody = $("orbRows");
     tbody.textContent = "";
     top.forEach(function(l,i){
@@ -291,7 +302,7 @@ td.key{color:var(--accent);font-weight:500}
       rowCell(tr, String(i+1));
       var name = rowCell(tr, l.name, "name");
       if (orbIcon){ var im = document.createElement("img"); im.className = "orbicon"; im.alt = ""; im.src = orbIcon; im.loading = "lazy"; im.onerror = function(){ im.remove(); }; name.insertBefore(im, name.firstChild); }
-      if ((l.count||0) < 3 || (l.listingCount||0) < 5){ var f = document.createElement("span"); f.className="flag"; f.textContent="Thin data"; name.appendChild(f); }
+      if (isThin(l)){ var f = document.createElement("span"); f.className="flag"; f.textContent="Thin data"; name.appendChild(f); }
       cardList(name, l.name);
       rowCell(tr, fmtPrice(l.chaosValue), "num key");
       cardCell(tr, l.name);

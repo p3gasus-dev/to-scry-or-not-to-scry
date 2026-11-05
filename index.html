@@ -178,8 +178,8 @@ td.key{color:var(--accent);font-weight:500}
 
   // Shortest text that finds this map and no other. The game's search matches any part of an item's
   // name (which ends in " Map"), ignoring case, so a piece is only usable if no other map contains it.
-  // At least four characters: shorter pieces also match mods and stats on the item.
-  var MIN_PIECE = 4;
+  // At least five characters: shorter pieces also match mods and stats on the item.
+  var MIN_PIECE = 5;
   function shortestUnique(name, others){
     var lower = name.toLowerCase();
     var pool = others.map(function(o){ return (o + " Map").toLowerCase(); });

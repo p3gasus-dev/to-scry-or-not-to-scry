@@ -1,0 +1,231 @@
+{
+ "league": "Allflame",
+ "fetchedAt": null,
+ "ports": [
+  {
+   "name": "Riben Fell",
+   "attr": "DEX",
+   "kind": "Runegraft",
+   "pool": [
+    "Runegraft of the Sinistral",
+    "Runegraft of the Bound",
+    "Runegraft of Refraction",
+    "Runegraft of the Imbued",
+    "Runegraft of the Agile",
+    "Runegraft of Suffering",
+    "Runegraft of Quaffing",
+    "Runegraft of Rotblood",
+    "Runegraft of the Fortress",
+    "Runegraft of Gemcraft",
+    "Runegraft of the Angler"
+   ],
+   "icon": "https://cdn.poedb.tw/image/Art/2DItems/Currency/Settlers/VillageRune14.webp"
+  },
+  {
+   "name": "Pondium",
+   "attr": "INT",
+   "kind": "Runegraft",
+   "pool": [
+    "Runegraft of Connection",
+    "Runegraft of Resurgence",
+    "Runegraft of the Spellbound",
+    "Runegraft of the Novamark",
+    "Runegraft of the Witchmark",
+    "Runegraft of Loyalty",
+    "Runegraft of Treachery",
+    "Runegraft of Time",
+    "Runegraft of Blasphemy",
+    "Runegraft of the Warp",
+    "Runegraft of the Fortress",
+    "Runegraft of Gemcraft",
+    "Runegraft of the Angler"
+   ],
+   "icon": "https://cdn.poedb.tw/image/Art/2DItems/Currency/Settlers/VillageRune14.webp"
+  },
+  {
+   "name": "Kalguur",
+   "attr": "STR",
+   "kind": "Runegraft",
+   "pool": [
+    "Runegraft of the River",
+    "Runegraft of the Combatant",
+    "Runegraft of the Soulwick",
+    "Runegraft of Restitching",
+    "Runegraft of Bellows",
+    "Runegraft of the Jeweller",
+    "Runegraft of Stability",
+    "Runegraft of Consecration",
+    "Runegraft of Fury",
+    "Runegraft of Rallying",
+    "Runegraft of the Fortress",
+    "Runegraft of Gemcraft",
+    "Runegraft of the Angler"
+   ],
+   "icon": "https://cdn.poedb.tw/image/Art/2DItems/Currency/Settlers/VillageRune14.webp"
+  },
+  {
+   "name": "Ngakanu",
+   "attr": "STR",
+   "kind": "Tattoo",
+   "pool": [
+    "Tattoo of the Ngamahu Firewalker",
+    "Tattoo of the Ngamahu Shaman",
+    "Tattoo of the Ngamahu Warrior",
+    "Tattoo of the Ngamahu Warmonger",
+    "Tattoo of the Ngamahu Woodcarver",
+    "Tattoo of the Kitava Blood Drinker",
+    "Tattoo of the Kitava Rebel",
+    "Tattoo of the Kitava Warrior",
+    "Tattoo of the Kitava Shaman",
+    "Tattoo of the Tukohama Shaman",
+    "Tattoo of the Tukohama Warrior",
+    "Tattoo of the Tukohama Brawler",
+    "Tattoo of the Tukohama Warmonger",
+    "Tattoo of the Tukohama Warcaller",
+    "Tattoo of the Rongokurai Warrior",
+    "Tattoo of the Rongokurai Brute",
+    "Tattoo of the Rongokurai Goliath",
+    "Tattoo of the Rongokurai Guard",
+    "Tattoo of the Tasalio Bladedancer",
+    "Tattoo of the Valako Shieldbearer"
+   ],
+   "icon": "https://cdn.poedb.tw/image/Art/2DItems/Currency/Ancestors/CommonStrTatttooEquipment.webp"
+  },
+  {
+   "name": "Te Onui",
+   "attr": "DEX",
+   "kind": "Tattoo",
+   "pool": [
+    "Tattoo of the Tasalio Tideshifter",
+    "Tattoo of the Tasalio Warrior",
+    "Tattoo of the Tasalio Scout",
+    "Tattoo of the Arohongui Moonwarden",
+    "Tattoo of the Arohongui Scout",
+    "Tattoo of the Arohongui Warrior",
+    "Tattoo of the Ramako Scout",
+    "Tattoo of the Ramako Archer",
+    "Tattoo of the Ramako Sniper",
+    "Tattoo of the Ramako Fleetfoot",
+    "Tattoo of the Ramako Shaman",
+    "Tattoo of the Tawhoa Naturalist",
+    "Tattoo of the Tawhoa Scout",
+    "Tattoo of the Tawhoa Herbalist"
+   ],
+   "icon": "https://cdn.poedb.tw/image/Art/2DItems/Currency/Ancestors/CommonDexTatttooEquipment.webp"
+  },
+  {
+   "name": "Moti Aro",
+   "attr": "INT",
+   "kind": "Tattoo",
+   "pool": [
+    "Tattoo of the Kitava Heart Eater",
+    "Tattoo of the Rongokurai Turtle",
+    "Tattoo of the Tasalio Shaman",
+    "Tattoo of the Arohongui Warmonger",
+    "Tattoo of the Arohongui Shaman",
+    "Tattoo of the Hinekora Warrior",
+    "Tattoo of the Hinekora Deathwarden",
+    "Tattoo of the Hinekora Shaman",
+    "Tattoo of the Hinekora Storyteller",
+    "Tattoo of the Hinekora Warmonger",
+    "Tattoo of the Tawhoa Warrior",
+    "Tattoo of the Tawhoa Shaman",
+    "Tattoo of the Valako Stormrider",
+    "Tattoo of the Valako Scout",
+    "Tattoo of the Valako Warrior",
+    "Tattoo of the Valako Shaman"
+   ],
+   "icon": "https://cdn.poedb.tw/image/Art/2DItems/Currency/Ancestors/CommonIntTatttooEquipment.webp"
+  }
+ ],
+ "resources": [
+  {
+   "name": "Crimson Iron ore",
+   "value": 4
+  },
+  {
+   "name": "Orichalcum ore",
+   "value": 5
+  },
+  {
+   "name": "Petrified Amber ore",
+   "value": 7
+  },
+  {
+   "name": "Bismuth ore",
+   "value": 12
+  },
+  {
+   "name": "Verisium ore",
+   "value": 22
+  },
+  {
+   "name": "Crimson Iron bar",
+   "value": 16
+  },
+  {
+   "name": "Orichalcum bar",
+   "value": 22
+  },
+  {
+   "name": "Petrified Amber bar",
+   "value": 30
+  },
+  {
+   "name": "Bismuth bar",
+   "value": 50
+  },
+  {
+   "name": "Verisium bar",
+   "value": 90
+  },
+  {
+   "name": "Wheat",
+   "value": 12
+  },
+  {
+   "name": "Corn",
+   "value": 15
+  },
+  {
+   "name": "Pumpkin",
+   "value": 18
+  },
+  {
+   "name": "Orgourd",
+   "value": 21
+  },
+  {
+   "name": "Blue Zanthimum",
+   "value": 24
+  }
+ ],
+ "runegraftThreshold": 400000,
+ "lines": [],
+ "tattooThreshold": 100000,
+ "quotaRewards": [
+  {
+   "name": "Ynda's Stand",
+   "ports": "Riben Fell, Pondium, Kalguur",
+   "level": 52
+  },
+  {
+   "name": "Cadigan's Authority",
+   "ports": "Riben Fell, Pondium, Kalguur",
+   "level": 62
+  },
+  {
+   "name": "Kaom's Command",
+   "ports": "Ngakanu, Te Onui, Moti Aro",
+   "level": 52
+  },
+  {
+   "name": "Tawhoa's Felling",
+   "ports": "Ngakanu, Te Onui, Moti Aro",
+   "level": 61
+  }
+ ],
+ "quota": [],
+ "resourceIcons": {},
+ "itemIcons": {}
+}

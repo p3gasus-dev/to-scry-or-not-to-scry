@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kingsmarch Shipment Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap">
+<style>
+.topnav{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 18px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.topnav a{font:500 .85rem var(--body);color:var(--muted);text-decoration:none;padding:6px 12px;border:1px solid transparent;border-radius:4px}
+.topnav a:hover{color:var(--fg)}
+.topnav a[aria-current="page"]{color:var(--accent);border-color:var(--line);background:var(--panel)}
+:root{
+  --bg:#f3f4f6; --panel:#ffffff; --fg:#14181d; --muted:#5b6672; --line:#d9dde2;
+  --accent:#1f6f8b; --up:#1a7f4b; --down:#b3342f; --warn:#8a6100;
+  --display:"Spectral",Georgia,serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1418; --panel:#161e24; --fg:#e6ebef; --muted:#93a0ab; --line:#27323a;
+  --accent:#5cc2e0; --up:#4cc38a; --down:#ef7b73; --warn:#e0b252; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1418; --panel:#161e24; --fg:#e6ebef; --muted:#93a0ab; --line:#27323a;
+  --accent:#5cc2e0; --up:#4cc38a; --down:#ef7b73; --warn:#e0b252; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);margin:0;
+  padding-block:32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1{font-family:var(--display);font-size:clamp(1.9rem,5vw,2.6rem);margin:0;text-wrap:balance;line-height:1.08}
+h2{font-family:var(--display);font-size:1.35rem;margin:0;text-wrap:balance}
+.warn{color:var(--warn)}
+.status{font-family:var(--mono);font-size:.8rem;color:var(--muted);margin:10px 0 0}
+section{display:flex;flex-direction:column;gap:12px;min-width:0}
+.cols{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;align-items:start}
+@media (min-width:1340px){main{max-width:1440px}.cols{grid-template-columns:minmax(0,1.12fr) minmax(0,1fr)}}
+.table-wrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-variant-numeric:tabular-nums}
+th,td{padding:11px 14px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:0}
+th:nth-child(1),td:nth-child(1){text-align:left;width:2.5rem;color:var(--muted);font-family:var(--mono)}
+th:nth-child(2),td:nth-child(2){text-align:left}
+td.name{font-family:var(--display);font-weight:700;font-size:1.05rem}
+td.name small{display:block;font:400 .72rem var(--body);color:var(--muted);margin-top:2px}
+th.l{text-align:left}
+td.num{font-family:var(--mono);font-size:.9rem}
+td.key{color:var(--accent);font-weight:500}
+td.txt{text-align:left;font-size:.85rem}
+.pair{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}
+.pair h3{font-family:var(--display);font-size:1rem;margin:0 0 8px;color:var(--muted);font-weight:500}
+@media (max-width:900px){.pair{grid-template-columns:minmax(0,1fr)}}
+table.res{min-width:0}
+table.res th,table.res td{padding:9px 10px;white-space:normal}
+table.res td.name{white-space:nowrap;font-size:1rem}
+table.res td.num{white-space:nowrap}
+tr.port{cursor:pointer}
+tr.port:hover td{background:var(--bg)}
+tr.port td.name{white-space:nowrap}
+.chev{display:inline-block;width:7px;height:7px;margin-right:12px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .15s;vertical-align:middle}
+tr.port[aria-expanded="true"] .chev{transform:rotate(45deg)}
+tr.detail td.dcell{padding:0;background:var(--bg);text-align:left;width:auto;color:inherit;font-family:inherit}
+tr.detail table{min-width:0;background:var(--panel);margin:0}
+tr.detail table{table-layout:fixed;width:100%}
+tr.detail th:nth-child(1){width:3.2rem}
+tr.detail th:nth-child(3),tr.detail th:nth-child(4){width:8rem}
+tr.detail td:nth-child(2){overflow:hidden;text-overflow:ellipsis}
+tr.detail td.dcell>table{border-top:1px solid var(--line)}
+tr.detail .empty{padding:14px;color:var(--muted);font-size:.85rem}
+td.grp{width:auto!important;background:var(--bg);color:var(--fg)!important;font-family:var(--display);font-weight:700;font-size:1.02rem;text-align:left}
+td.grp small{font:400 .75rem var(--body);color:var(--muted);margin-left:8px}
+.up{color:var(--up)} .down{color:var(--down)}
+img.ico.big{width:34px;height:34px;margin-right:10px}
+img.ico{width:26px;height:26px;object-fit:contain;vertical-align:middle;margin-right:8px}
+.flag{display:inline-block;margin-left:8px;padding:1px 6px;border:1px solid var(--warn);color:var(--warn);border-radius:3px;font:500 .65rem var(--mono);letter-spacing:.06em;text-transform:uppercase;vertical-align:middle;font-style:normal}
+details{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:0 14px}
+summary{cursor:pointer;padding:12px 0;font-family:var(--display);font-weight:700;font-size:1.05rem}
+summary small{font:400 .78rem var(--body);color:var(--muted);margin-left:8px}
+details ul{list-style:none;margin:0;padding:0 0 10px}
+details li{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-top:1px solid var(--line);font-size:.9rem}
+details li span:last-child{font-family:var(--mono);font-size:.85rem;color:var(--accent)}
+.searchrow{display:flex;gap:8px;min-width:0}
+.search{display:flex;flex-direction:column;gap:6px;min-width:0}
+.search label{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.searchrow input{flex:1;min-width:0;font:inherit;font-family:var(--mono);font-size:.85rem;padding:9px 10px;border:1px solid var(--line);background:var(--panel);color:var(--fg);border-radius:4px}
+.searchrow button{font:inherit;font-size:.9rem;padding:8px 16px;border:1px solid var(--accent);background:var(--accent);color:var(--bg);border-radius:4px;cursor:pointer;min-width:4.5rem}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.msg{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;font-size:.92rem}
+.note{color:var(--muted);font-size:.82rem;max-width:70ch;margin:0}
+.note a{color:var(--accent)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <nav class="topnav" aria-label="Pages"><a href="index.html">To Scry or Not to Scry</a><a href="kingsmarch.html" aria-current="page">Kingsmarch</a></nav>
+    <h1>Kingsmarch Shipment Assistant</h1>
+    <p class="status" id="status" role="status">Loading…</p>
+    <p class="status warn" id="notice" hidden></p>
+  </header>
+
+  <section id="searchSection" hidden>
+    <div class="search">
+      <label for="reTop">Top runegrafts to look for in your stash</label>
+      <div class="searchrow"><input id="reTop" readonly spellcheck="false"><button type="button" data-copy="reTop">Copy</button></div>
+    </div>
+  </section>
+
+  <section>
+      <h2>Ports</h2>
+      <p class="note" style="margin:-4px 0 0">Select a port to see every reward it can give and its price.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Port</th><th>Avg price</th><th class="l">Best item</th><th>Best price</th></tr></thead>
+          <tbody id="portRows"></tbody>
+        </table>
+      </div>
+  </section>
+
+  <section>
+    <h2>Shipment value</h2>
+    <div class="pair">
+      <div>
+        <h3>Ore/Bars</h3>
+        <div class="table-wrap"><table class="res">
+          <thead><tr><th>#</th><th>Resource</th><th>Value<br>ore / bar</th><th>Tattoo units (Karui ports)<br>ore / bar</th><th>Runegraft units (Kalguuran ports)<br>ore / bar</th></tr></thead>
+          <tbody id="oreRows"></tbody>
+        </table></div>
+      </div>
+      <div>
+        <h3>Farming</h3>
+        <div class="table-wrap"><table class="res">
+          <thead><tr><th>#</th><th>Resource</th><th>Value each</th><th>Tattoo units (Karui ports)</th><th>Runegraft units (Kalguuran ports)</th></tr></thead>
+          <tbody id="farmRows"></tbody>
+        </table></div>
+      </div>
+    </div>
+    <p class="note">Rewards scale linearly with raw shipment value, excluding dust and port quotas: about one tattoo per 100k (Karui ports, capped at 40 per shipment at roughly 4m) and about one runegraft per 400k (Kalguuran ports, capped at 100 per shipment at roughly 40m). “Tattoo units (Karui ports)” and “Runegraft units (Kalguuran ports)” divide those values by the value of each unit. Past the cap, extra rewards are rerolled 3 to 1 within the port's pool.</p>
+  </section>
+
+  <section>
+    <h2>Port quota rewards</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Reward</th><th>Price</th><th>7d</th></tr></thead>
+        <tbody id="quotaRows"></tbody>
+      </table>
+    </div>
+    <p class="note">Given for completing a port quota. Kalguuran ports (Riben Fell, Pondium, Kalguur) give Ynda's Stand at character level 52+ and Cadigan's Authority at 62+. Karui ports (Ngakanu, Te Onui, Moti Aro) give Kaom's Command at 52+ and Tawhoa's Felling at 61+.</p>
+  </section>
+
+  <section class="msg" id="error" hidden></section>
+
+  <p class="note">“Avg price” assumes every reward in a port's pool is equally likely, which is an assumption, not a measured drop rate. “Thin data” marks prices backed by one or two recent observations, or fewer than five listings, which can be stale. Prices from <a href="https://poe.ninja/poe1/economy/allflame/runegrafts" rel="noopener">poe.ninja</a>, pools from the <a href="https://www.poewiki.net/wiki/Kingsmarch#Table_of_rewards" rel="noopener">PoE Wiki</a>. Thresholds and rewards from the PoE Wiki.</p>
+</main>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var divRate = 0;
+  var openPorts = {};
+  function fmt(n,d){ return Number(n).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}); }
+  function cell(tr,text,cls){ var td=document.createElement("td"); td.textContent=text; if(cls) td.className=cls; tr.appendChild(td); return td; }
+  function fmtPrice(c){
+    if (c == null) return "–";
+    if (divRate > 0 && c >= divRate){ var d=c/divRate; return fmt(d, d>=10?1:2)+" d"; }
+    if (c < 0.1) return "< 0.1 c";
+    return fmt(c, c>=100?0:1)+" c";
+  }
+
+  function icon(m){
+    if(!m || !m.icon || !/^https:\/\//.test(m.icon)) return null;
+    var im=document.createElement("img"); im.className="ico"; im.src=m.icon; im.alt=""; im.loading="lazy"; im.referrerPolicy="no-referrer";
+    im.onerror=function(){ im.remove(); };
+    return im;
+  }
+  var itemIcons = {};
+  function itemIcon(it, port){ return icon({ icon: (it.m && it.m.icon) || itemIcons[it.name] || port.icon }); }
+  function render(data){
+    itemIcons = data.itemIcons || {};
+    var P = {}, M = {};
+    (data.lines||[]).forEach(function(l){ if(l && l.name && l.chaosValue>0){ P[l.name]=l.chaosValue; M[l.name]=l; } });
+    var ports = data.ports.map(function(p){
+      var items = p.pool.map(function(n){ return { name:n, price:(typeof P[n]==="number")?P[n]:null, m:M[n]||null }; });
+      var priced = items.filter(function(i){ return i.price!=null; });
+      var avg = (p.pool.length && priced.length===p.pool.length) ? priced.reduce(function(s,i){return s+i.price;},0)/priced.length : null;
+      var best = priced.slice().sort(function(a,b){return b.price-a.price;})[0] || null;
+      return { p:p, items:items.sort(function(a,b){ return (b.price==null?-1:b.price)-(a.price==null?-1:a.price); }), avg:avg, best:best };
+    });
+    ports.sort(function(a,b){ return (b.avg==null?-1:b.avg)-(a.avg==null?-1:a.avg); });
+
+    var tb=$("portRows"); tb.textContent="";
+    ports.forEach(function(r,i){
+      var key=r.p.name, isOpen=!!openPorts[key];
+      var tr=document.createElement("tr"); tr.className="port";
+      tr.tabIndex=0; tr.setAttribute("role","button"); tr.setAttribute("aria-expanded",isOpen?"true":"false");
+      cell(tr,String(i+1));
+      var n=cell(tr,"","name"); var pic=icon({icon:r.p.icon}); if(pic){ pic.className="ico big"; n.appendChild(pic); } var ch=document.createElement("span"); ch.className="chev"; ch.setAttribute("aria-hidden","true"); n.appendChild(ch);
+      n.appendChild(document.createTextNode(r.p.name)); var s=document.createElement("small"); s.textContent=r.p.attr+" "+r.p.kind+"s"+(r.p.pool.length?" · "+r.p.pool.length+" rewards":""); n.appendChild(s);
+      var a=cell(tr,r.avg==null?"–":fmtPrice(r.avg),"num key"); if(r.avg==null) a.title = r.p.pool.length ? "Some prices missing" : "Reward list for this port not loaded";
+      var bn=cell(tr,"","txt"); if(r.best){ var bi=itemIcon(r.best,r.p); if(bi) bn.appendChild(bi); bn.appendChild(document.createTextNode(r.best.name.replace(/^(Tattoo|Runegraft) of (the )?/,""))); } else bn.textContent="–";
+      cell(tr,r.best?fmtPrice(r.best.price):"–","num");
+      tb.appendChild(tr);
+
+      var dr=document.createElement("tr"); dr.className="detail"; dr.hidden=!isOpen;
+      var dt=document.createElement("td"); dt.colSpan=5; dt.className="dcell"; dr.appendChild(dt);
+      if(!r.items.length){
+        var e=document.createElement("div"); e.className="empty"; e.textContent="The reward list for this port has not been added yet."; dt.appendChild(e);
+      } else {
+        var t=document.createElement("table");
+        t.innerHTML="<thead><tr><th>#</th><th class=\"l\">Reward</th><th>Price</th><th>7d</th></tr></thead>";
+        var pb=document.createElement("tbody");
+        r.items.forEach(function(it,k){
+          var ir=document.createElement("tr");
+          cell(ir,String(k+1));
+          var nm=cell(ir,"","txt"); var ic=itemIcon(it,r.p); if(ic) nm.appendChild(ic); nm.appendChild(document.createTextNode(it.name.replace(/^(Tattoo|Runegraft) of (the )?/,"")));
+          if(it.m && ((it.m.count||0)<3 || (it.m.listingCount||0)<5)){ var f=document.createElement("em"); f.className="flag"; f.textContent="Thin data"; nm.appendChild(f); }
+          cell(ir,fmtPrice(it.price),"num key");
+          var c7=it.m && typeof it.m.change==="number" ? it.m.change : null;
+          cell(ir,c7==null?"–":(c7>0?"+":"")+fmt(c7,0)+"%","num "+(c7>0?"up":c7<0?"down":""));
+          pb.appendChild(ir);
+        });
+        t.appendChild(pb); dt.appendChild(t);
+      }
+      tb.appendChild(dr);
+      var toggle=function(){ var o=dr.hidden; dr.hidden=!o; openPorts[key]=o; tr.setAttribute("aria-expanded",o?"true":"false"); };
+      tr.addEventListener("click",toggle);
+      tr.addEventListener("keydown",function(ev){ if(ev.key==="Enter"||ev.key===" "){ ev.preventDefault(); toggle(); } });
+    });
+
+    var qb=$("quotaRows"); qb.textContent="";
+    var QM={}; (data.quota||[]).forEach(function(l){ if(l&&l.name&&l.chaosValue>0) QM[l.name]=l; });
+    (data.quotaRewards||[]).forEach(function(q,i){
+      var m=QM[q.name]||null, tr=document.createElement("tr");
+      cell(tr,String(i+1));
+      var n=cell(tr,"","name"); var ic=icon(m); if(ic) n.appendChild(ic); n.appendChild(document.createTextNode(q.name));
+      if(m && ((m.count||0)<3 || (m.listingCount||0)<5)){ var f=document.createElement("em"); f.className="flag"; f.textContent="Thin data"; n.appendChild(f); }
+      cell(tr,m?fmtPrice(m.chaosValue):"–","num key");
+      var ch=m&&typeof m.change==="number"?m.change:null;
+      cell(tr,ch==null?"–":(ch>0?"+":"")+fmt(ch,0)+"%","num "+(ch>0?"up":ch<0?"down":""));
+      qb.appendChild(tr);
+    });
+
+    var T=data.runegraftThreshold||400000, TT=data.tattooThreshold||100000, RI=data.resourceIcons||{};
+    var rIcon=function(n){ return RI[n]?icon({icon:RI[n]}):null; };
+    var ore=$("oreRows"), farm=$("farmRows"); ore.textContent=""; farm.textContent="";
+    var cnt=0, groups={}, order=[];
+    data.resources.forEach(function(x){
+      var m=/^(.*)\s(ore|bar)$/i.exec(x.name);
+      if(m){ var g=m[1]; if(!groups[g]){ groups[g]={}; order.push(g); } groups[g][m[2].toLowerCase()]=x.value; return; }
+      var tr=document.createElement("tr");
+      cell(tr,String(farm.children.length+1)); var fn=cell(tr,"","name"); var fi=rIcon(x.name); if(fi) fn.appendChild(fi); fn.appendChild(document.createTextNode(x.name));
+      cell(tr,fmt(x.value,0),"num"); cell(tr,fmt(Math.ceil(TT/x.value),0),"num"); cell(tr,fmt(Math.ceil(T/x.value),0),"num key");
+      farm.appendChild(tr);
+    });
+    order.forEach(function(g){
+      var o=groups[g].ore, b=groups[g].bar, tr=document.createElement("tr");
+      var two=function(f){ return (o?f(o):"–")+" / "+(b?f(b):"–"); };
+      cell(tr,String(++cnt)); var gn=cell(tr,"","name"); [g+" ore",g+" bar"].forEach(function(k){ var gi=rIcon(k); if(gi) gn.appendChild(gi); }); gn.appendChild(document.createTextNode(g));
+      cell(tr,two(function(v){return fmt(v,0);}),"num");
+      cell(tr,two(function(v){return fmt(Math.ceil(TT/v),0);}),"num");
+      cell(tr,two(function(v){return fmt(Math.ceil(T/v),0);}),"num key");
+      ore.appendChild(tr);
+    });
+
+    var seen={}, top=[];
+    ports.forEach(function(r){ r.items.forEach(function(i){ if(i.price!=null && !seen[i.name]){ seen[i.name]=1; top.push(i);} }); });
+    top.sort(function(a,b){return b.price-a.price;});
+    var parts=[],len=0;
+    for(var k=0;k<top.length;k++){ var q='"'+top[k].name+'"'; if(len+q.length+(parts.length?1:0)>250) break; len+=q.length+(parts.length?1:0); parts.push(q); }
+    $("reTop").value=parts.join("|");
+    $("searchSection").hidden=!parts.length;
+  }
+
+  async function load(){
+    try{
+      var res=await fetch("kingsmarch.json",{cache:"no-cache"});
+      if(!res.ok) throw new Error("data.json returned "+res.status);
+      var data=await res.json();
+      data.lines=data.lines||[];
+      // Chaos per divine, from the dearest item (the most precise ratio).
+      divRate=0; var best=null;
+      data.lines.forEach(function(l){ if(l.divineValue>=1 && (!best || l.chaosValue>best.chaosValue)) best=l; });
+      if(best) divRate=best.chaosValue/best.divineValue;
+      render(data);
+      var when=data.fetchedAt?new Date(data.fetchedAt):new Date(NaN), notes=[];
+      if(!data.lines.length) notes.push("No prices yet. Pricing is built by the site's scheduled update, so check back shortly.");
+      else if(!isNaN(when) && Date.now()-when>3*3600*1000) notes.push("Prices have not refreshed since "+when.toLocaleString()+".");
+      if((data.pools||{}).source==="static") notes.push("Port reward pools are a saved list, not live, and may be out of date for this league.");
+      if((data.unpooled||[]).length) notes.push(data.unpooled.length+" priced runegrafts or tattoos are in no port pool yet ("+data.unpooled.slice(0,3).join(", ")+(data.unpooled.length>3?", …":"")+").");
+      $("notice").textContent=notes.join(" "); $("notice").hidden=!notes.length;
+      $("status").textContent=data.league+(isNaN(when)?"":" · prices updated "+when.toLocaleString());
+      $("error").hidden=true;
+    }catch(e){
+      $("error").hidden=false; $("error").textContent="No data yet. ("+e.message+")";
+      $("status").textContent="Waiting for first update";
+    }
+  }
+  setInterval(function(){ load(); }, 5*60*1000);
+
+  document.querySelectorAll("button[data-copy]").forEach(function(btn){
+    btn.addEventListener("click",async function(){
+      var input=$(btn.getAttribute("data-copy"));
+      var done=function(ok){ btn.textContent=ok?"Copied":"Press Ctrl+C"; setTimeout(function(){btn.textContent="Copy";},1800); };
+      try{ await navigator.clipboard.writeText(input.value); done(true);}catch(e){ input.focus(); input.select(); done(false);}
+    });
+  });
+  load();
+})();
+</script>
+</body>
+</html>

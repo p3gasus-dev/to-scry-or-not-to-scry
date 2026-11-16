@@ -11,6 +11,11 @@ Ranks Path of Exile scrying orbs by price and the best maps to scry onto. A GitH
 - Map card lists: PoEDB, refreshed daily and checked before use. If PoEDB changes or fails, the last good lists stay, then `map-cards.json` (a snapshot) is used. The page says when it is on the snapshot.
 - Map score: layout × 3, density × 2, boss × 1 and cheap cards × 2, out of 100.
 
+## Pages
+
+- `index.html`: To Scry or Not to Scry.
+- `kingsmarch.html`: Kingsmarch Shipment Assistant. Runegraft, tattoo and quota-reward prices come from poe.ninja. Ports, reward pools, resource values and thresholds are fixed data in `kingsmarch-static.json`. If poe.ninja has no prices for it, the page still loads without them and the build log says why.
+
 ## Sources
 
 - [poe.ninja](https://poe.ninja) ([API docs](https://poe.ninja/docs/api))

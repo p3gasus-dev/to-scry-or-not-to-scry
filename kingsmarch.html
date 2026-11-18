@@ -168,6 +168,8 @@ details li span:last-child{font-family:var(--mono);font-size:.85rem;color:var(--
     return fmt(c, c>=100?0:1)+" c";
   }
 
+  // Thin only where poe.ninja reports counts; the exchange does not.
+  function thin(m){ return !!m && m.count!=null && (m.count<3 || (m.listingCount||0)<5); }
   function icon(m){
     if(!m || !m.icon || !/^https:\/\//.test(m.icon)) return null;
     var im=document.createElement("img"); im.className="ico"; im.src=m.icon; im.alt=""; im.loading="lazy"; im.referrerPolicy="no-referrer";
@@ -214,7 +216,7 @@ details li span:last-child{font-family:var(--mono);font-size:.85rem;color:var(--
           var ir=document.createElement("tr");
           cell(ir,String(k+1));
           var nm=cell(ir,"","txt"); var ic=itemIcon(it,r.p); if(ic) nm.appendChild(ic); nm.appendChild(document.createTextNode(it.name.replace(/^(Tattoo|Runegraft) of (the )?/,"")));
-          if(it.m && ((it.m.count||0)<3 || (it.m.listingCount||0)<5)){ var f=document.createElement("em"); f.className="flag"; f.textContent="Thin data"; nm.appendChild(f); }
+          if(thin(it.m)){ var f=document.createElement("em"); f.className="flag"; f.textContent="Thin data"; nm.appendChild(f); }
           cell(ir,fmtPrice(it.price),"num key");
           var c7=it.m && typeof it.m.change==="number" ? it.m.change : null;
           cell(ir,c7==null?"–":(c7>0?"+":"")+fmt(c7,0)+"%","num "+(c7>0?"up":c7<0?"down":""));
@@ -234,7 +236,7 @@ details li span:last-child{font-family:var(--mono);font-size:.85rem;color:var(--
       var m=QM[q.name]||null, tr=document.createElement("tr");
       cell(tr,String(i+1));
       var n=cell(tr,"","name"); var ic=icon(m); if(ic) n.appendChild(ic); n.appendChild(document.createTextNode(q.name));
-      if(m && ((m.count||0)<3 || (m.listingCount||0)<5)){ var f=document.createElement("em"); f.className="flag"; f.textContent="Thin data"; n.appendChild(f); }
+      if(thin(m)){ var f=document.createElement("em"); f.className="flag"; f.textContent="Thin data"; n.appendChild(f); }
       cell(tr,m?fmtPrice(m.chaosValue):"–","num key");
       var ch=m&&typeof m.change==="number"?m.change:null;
       cell(tr,ch==null?"–":(ch>0?"+":"")+fmt(ch,0)+"%","num "+(ch>0?"up":ch<0?"down":""));
@@ -282,6 +284,7 @@ details li span:last-child{font-family:var(--mono);font-size:.85rem;color:var(--
       divRate=0; var best=null;
       data.lines.forEach(function(l){ if(l.divineValue>=1 && (!best || l.chaosValue>best.chaosValue)) best=l; });
       if(best) divRate=best.chaosValue/best.divineValue;
+      if(!divRate && data.divineRate>0) divRate=data.divineRate;
       render(data);
       var when=data.fetchedAt?new Date(data.fetchedAt):new Date(NaN), notes=[];
       if(!data.lines.length) notes.push("No prices yet. Pricing is built by the site's scheduled update, so check back shortly.");

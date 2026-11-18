@@ -308,17 +308,47 @@ KM_TYPES = {"runegraft": ["Runegraft", "Runegrafts"], "tattoo": ["Tattoo", "Tatt
 UNIQUE_TYPES = ["UniqueArmour", "UniqueAccessory", "UniqueWeapon", "UniqueJewel", "UniqueFlask"]
 
 
+def exchange_lines(payload):
+    """Lines from the exchange endpoint: prices in chaos, names and images in the item lists."""
+    items = {}
+    for item in (payload.get("items") or []) + ((payload.get("core") or {}).get("items") or []):
+        items[item.get("detailsId")] = item
+        items[item.get("id")] = item
+    out = []
+    for line in payload.get("lines") or []:
+        item = items.get(line.get("id")) or {}
+        if not item.get("name") or line.get("primaryValue") is None:
+            continue
+        spark = line.get("sparkline") or line.get("sparkLine") or {}
+        out.append({
+            "name": item["name"],
+            "chaosValue": line["primaryValue"],
+            "divineValue": None,
+            "count": None,          # the exchange has no listing counts
+            "listingCount": None,
+            "change": spark.get("totalChange"),
+            "icon": urllib.parse.urljoin("https://poe.ninja/", item["image"]) if item.get("image") else None,
+        })
+    return out
+
+
 def item_lines(fetcher, league, types):
-    """Returns (type, lines) for the first item type poe.ninja answers with lines."""
+    """Returns (type, lines) for the first item type poe.ninja answers with lines, trying the
+    exchange endpoint and then the stash endpoint for each type name."""
     for item_type in types:
-        url = "%s/stash/current/item/overview?league=%s&type=%s" % (NINJA, urllib.parse.quote(league), item_type)
-        text = fetcher.get("km-%s.json" % item_type, url, optional=True)
-        try:
-            lines = build_orbs(json.loads(text)) if text else []
-        except (ValueError, KeyError, TypeError):
-            lines = []
-        if lines:
-            return item_type, lines
+        for kind in ("exchange", "stash"):
+            if kind == "exchange":
+                url = "%s/exchange/current/overview?league=%s&type=%s" % (NINJA, urllib.parse.quote(league), item_type)
+            else:
+                url = "%s/stash/current/item/overview?league=%s&type=%s" % (NINJA, urllib.parse.quote(league), item_type)
+            text = fetcher.get("km-%s-%s.json" % (kind, item_type), url, optional=True)
+            try:
+                payload = json.loads(text) if text else {}
+                lines = exchange_lines(payload) if kind == "exchange" else build_orbs(payload)
+            except (ValueError, KeyError, TypeError, AttributeError):
+                lines = []
+            if lines:
+                return "%s/%s" % (kind, item_type), lines
     return None, []
 
 
@@ -391,15 +421,20 @@ def build_kingsmarch(fetcher, league, static, fetched_at, previous=None, today=N
     try:
         for group, types in KM_TYPES.items():
             used, lines = item_lines(fetcher, league, types)
-            log("Kingsmarch: %s prices: %s" % (group, ("%d from type %s" % (len(lines), used)) if used else "none found"))
+            log("Kingsmarch: %s prices: %s" % (group, ("%d from %s" % (len(lines), used)) if used else "none found"))
             data["lines"].extend(lines)
 
+        # Chaos per divine, so prices can be shown in divines (exchange lines carry no divine value).
+        _, currency = item_lines(fetcher, league, ["Currency"])
+        for line in currency:
+            if line["name"] == "Divine Orb":
+                data["divineRate"] = line["chaosValue"]
         wanted = {q["name"] for q in static.get("quotaRewards") or []}
         found = {}
         for item_type in UNIQUE_TYPES:
             if len(found) == len(wanted):
                 break
-            _, lines = item_lines(fetcher, league, [item_type])
+            _, lines = item_lines(fetcher, league, [item_type])  # uniques are on the stash endpoint
             for line in lines:
                 if line["name"] in wanted:
                     best = found.get(line["name"])
